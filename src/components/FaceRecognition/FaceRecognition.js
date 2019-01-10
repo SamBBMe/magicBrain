@@ -7,7 +7,7 @@ const FaceRecognition = ({ imageUrl, box }) =>
         <div className='center ma'>
             <div className='absolute mt4'>
                 <img id='inputImage' alt='inputImg' src={imageUrl} width='500px' height='auto'/>
-                <div className='bounding-box' 
+                <div className='bounding-box'
                      style={{
                             top: box.topRow,
                             right: box.rightCol, 
