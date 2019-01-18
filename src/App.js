@@ -35,8 +35,25 @@ class App extends Component {
       imageUrl: '',
       box: {},
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: ''
+      }
     }
+  }
+
+  loadUser = (data) => {
+    this.setState({user: {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      joined: data.joined
+    }})
   }
 
   calculateFaceLocation = (data) => {
@@ -67,17 +84,35 @@ class App extends Component {
       .predict(
         Clarifai.FACE_DETECT_MODEL,
         this.state.input)
-      .then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
+      .then(response => {
+        if(response) {
+          fetch('https://localhost:3000/image', {
+            method: 'put',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              id: this.state.user.id
+            })
+          })
+        }
+        this.displayFaceBox(this.calculateFaceLocation(response))
+        })
+          .then(response => response.json())
+          .then(count => {
+            this.setState({users: {
+              entries: count
+            }})
+          })
       .catch(err => console.log(err));
   }
 
   onRouteChange = (route) => {
     if(route === 'signout') {
-      this.setState({isSignedIn: false});
+      this.setState({isSignedIn: false, route: 'signin'});
     } else if (route === 'home') {
-      this.setState({isSignedIn: true});
-    }
+      this.setState({isSignedIn: true, route: route});
+    } else {
     this.setState({route: route});
+    }
   }
 
   render() {
@@ -90,7 +125,9 @@ class App extends Component {
         { this.state.route === 'home' 
             ? <div>
                 <Logo />
-                <Rank />
+                <Rank 
+                  name={this.state.user.name}
+                  entries={this.state.user.entries}/>
                 <ImageLinkForm 
                   onInputChange={this.onInputChange} 
                   onButtonSubmit={this.onButtonSubmit}/>
@@ -100,7 +137,8 @@ class App extends Component {
               </div> 
             : (this.state.route === 'signin'
                 ?<SignIn onRouteChange={this.onRouteChange}/>
-                : <Register onRouteChange={this.onRouteChange}/>)
+                : <Register onRouteChange={this.onRouteChange}
+                            loadUser={this.loadUser}/>)
         } 
       </div>
     );
