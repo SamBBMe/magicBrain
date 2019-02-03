@@ -31,7 +31,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      input: 'https://s17-us2.startpage.com/cgi-bin/serveimage?url=https:%2F%2Fsteamuserimages-a.akamaihd.net%2Fugc%2F478895272571535117%2F507261AA2503E9BEEB71D35BD43BA88320B1AD78%2F%3Finterpolation%3Dlanczos-none%26amp;output-format%3Djpeg%26amp;output-quality%3D95%26amp;fit%3Dinside%257C637%253A358%26amp;composite-to%3D*,*%257C637%253A358%26amp;background-color%3Dblack&sp=e2dc7e026b27f2d0d957fc6f0dd0d845',
+      input: 'https://i.ytimg.com/vi/1DC6RAr2xcM/maxresdefault.jpg',
       imageUrl: '',
       box: {},
       route: 'signin',
@@ -86,7 +86,7 @@ class App extends Component {
         this.state.input)
       .then(response => {
         if(response) {
-          fetch('http://localhost:3000/image', {
+          fetch('https://dry-forest-26579.herokuapp.com/image', {
             method: 'put',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -95,9 +95,7 @@ class App extends Component {
           })
           .then(response => response.json())
           .then(count => {
-            this.setState({users: {
-              entries: count
-            }})
+               this.setState(Object.assign(this.state.user, { entries: count}))
           })
 
         }
